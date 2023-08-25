@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Employee Eligibility
+  description: Employee Eligibility APIs
+  version: 0.1.0
+servers:
+- url: https://application-ab.151di5ffrvir.eu-gb.codeengine.appdomain.cloud
+paths:
+  /:
+    get:
+      summary: Employee Eligibility Ping
+      description: Employee Eligibility Ping
+      operationId: greeting
+      responses:
+        '200':
+          description: Employee Eligibility Ping
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - HTTPBasic: []
+  /candidate/{id}:
+    get:
+      summary: View a candidate
+      description: View a candidate
+      operationId: get_candidate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+      responses:
+        '200':
+          description: The candidate details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Candidate'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Candidate:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        status:
+          type: string
+          title: Status
+        dob:
+          type: string
+          format: date
+          title: Dob
+      type: object
+      required:
+        - id
+        - name
+        - status
+        - dob
+      title: Candidate
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Message:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+        - message
+      title: Message
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBasic:
+      type: http
+      scheme: basic
