@@ -17,7 +17,7 @@ This API allows you to view, add and update candidates. You will be able to:
 * **Set the status of a candidate to onboarding**
 * **Add a candidate**
 
-* **Filter candidates** (_not implemented_).
+* **Filter candidates using Neural Network** (_not implemented_).
 """
 
 

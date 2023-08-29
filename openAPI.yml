@@ -1,13 +1,33 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
   title: Employee Eligibility
-  description: Employee Eligibility APIs
-  version: 0.3.1
-  x-ibm-annotations: true
-  x-ibm-application-id: empEligibility
-  x-ibm-application-name: Employee Eligibility
+  summary: Employee Eligibility
+  description: |
+
+    Employee Eligibility API helps you do awesome stuff. 🚀
+
+    ## Candidates
+
+    This API allows you to view, add and update candidates. You will be able to:
+
+    * **View a candidate**
+    * **View ALL candidate**
+    * **View the next candidate ready for onboarding**
+    * **Set the status of a candidate to onboarding**
+    * **Add a candidate**
+
+    * **Filter candidates using Neural Network** (_not implemented_).
+  termsOfService: http://example.com/terms/
+  contact:
+    name: Gerry Baird
+    url: https://github.com/gerry-baird/employee-eligibility-api
+    email: gerry.baird@uk.ibm.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: '1.8'
 servers:
-- url: https://application-ab.151di5ffrvir.eu-gb.codeengine.appdomain.cloud
+  - url: https://application-ab.151di5ffrvir.eu-gb.codeengine.appdomain.cloud
 paths:
   /:
     get:
@@ -84,7 +104,7 @@ paths:
               $ref: '#/components/schemas/CandidateIdentifier'
         required: true
       responses:
-        '201':
+        '200':
           description: Updated candidate
           content:
             application/json:
@@ -176,7 +196,6 @@ components:
         - eligibility
         - ref
       title: Candidate
-      x-ibm-response-wrapper: true
     CandidateIdentifier:
       properties:
         id:
