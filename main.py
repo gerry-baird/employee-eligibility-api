@@ -24,7 +24,6 @@ This API allows you to view, add and update candidates. You will be able to:
 app = FastAPI(
     title="Employee Eligibility",
     description=description,
-    summary="Employee Eligibility",
     version="1.8",
     terms_of_service="http://example.com/terms/",
     contact={
@@ -99,7 +98,8 @@ pre_baked_candidates = regenCandidates()
 @app.get("/",
          summary='Employee Eligibility Ping',
          description='Employee Eligibility Ping',
-         response_description="Employee Eligibility Ping"
+         response_description="Employee Eligibility Ping",
+         tags=["Hello World"]
          )
 async def greeting(credentials: HTTPBasicCredentials = Depends(security)) -> Message:
     return {"message": "Employee Eligibility is Alive"}
@@ -108,7 +108,9 @@ async def greeting(credentials: HTTPBasicCredentials = Depends(security)) -> Mes
 @app.get("/candidate/{id}",
          summary='View a candidate',
          description='View a candidate',
-         response_description="The candidate details")
+         response_description="The candidate details",
+         tags=["Candidates"]
+         )
 def get_candidate(id: int) -> Candidate:
     for candidate in pre_baked_candidates:
         if candidate.id == id:
@@ -120,7 +122,9 @@ def get_candidate(id: int) -> Candidate:
 @app.get("/candidates",
          summary='View all candidates',
          description='View all candidates',
-         response_description="All the candidate details")
+         response_description="All the candidate details",
+         tags=["Candidates"]
+         )
 def getCandidates() -> CandidateList:
 
     all_candidates = CandidateList(candidates = pre_baked_candidates)
@@ -131,7 +135,9 @@ def getCandidates() -> CandidateList:
 @app.get("/onboarding",
          summary='Next candidate ready for onboarding',
          description='Next candidate ready for onboarding',
-         response_description="The candidate details")
+         response_description="The candidate details",
+         tags=["Onboarding"]
+)
 def getNextCandidateForOnboarding() -> Candidate:
     for candidate in pre_baked_candidates:
         if candidate.status == "Accepted":
@@ -142,7 +148,8 @@ def getNextCandidateForOnboarding() -> Candidate:
     '/setStatusOnboarding',
     summary='Set candidate status to onboarding',
     description='Set candidate status to onboarding',
-    response_description="Updated candidate"
+    response_description="Updated candidate",
+    tags=["Onboarding"]
 )
 def updateToOnboarding(identifier: CandidateIdentifier) -> Candidate:
     target_id = identifier.id
@@ -163,7 +170,8 @@ def updateToOnboarding(identifier: CandidateIdentifier) -> Candidate:
 @app.post('/reset',
           summary='Reset',
           description='Resets all candidates to initial state',
-          response_description="All candidate details")
+          response_description="All candidate details",
+          tags=["Admin"])
 def reset() -> CandidateList:
     global pre_baked_candidates
     pre_baked_candidates = regenCandidates()
@@ -174,9 +182,10 @@ def reset() -> CandidateList:
 
 
 @app.post('/candidate',
-    summary = 'Add Candidate',
-    description = 'Add Candidate',
-    response_description = "New Candidate")
+          summary = 'Add Candidate',
+          description = 'Add Candidate',
+          response_description = "New Candidate",
+          tags=["Candidates"])
 def addCandidate(newCandidate: Candidate) -> Candidate:
 
     # find the maximum ID in the existing candidates

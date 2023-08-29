@@ -1,7 +1,6 @@
 openapi: 3.0.1
 info:
   title: Employee Eligibility
-  summary: Employee Eligibility
   description: |
 
     Employee Eligibility API helps you do awesome stuff. 🚀
@@ -31,6 +30,8 @@ servers:
 paths:
   /:
     get:
+      tags:
+        - Hello World
       summary: Employee Eligibility Ping
       description: Employee Eligibility Ping
       operationId: greeting
@@ -45,6 +46,8 @@ paths:
         - HTTPBasic: []
   /candidate/{id}:
     get:
+      tags:
+        - Candidates
       summary: View a candidate
       description: View a candidate
       operationId: get_candidate
@@ -70,6 +73,8 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
   /candidates:
     get:
+      tags:
+        - Candidates
       summary: View all candidates
       description: View all candidates
       operationId: getCandidates
@@ -82,6 +87,8 @@ paths:
                 $ref: '#/components/schemas/CandidateList'
   /onboarding:
     get:
+      tags:
+        - Onboarding
       summary: Next candidate ready for onboarding
       description: Next candidate ready for onboarding
       operationId: getNextCandidateForOnboarding
@@ -94,6 +101,8 @@ paths:
                 $ref: '#/components/schemas/Candidate'
   /setStatusOnboarding:
     post:
+      tags:
+        - Onboarding
       summary: Set candidate status to onboarding
       description: Set candidate status to onboarding
       operationId: updateToOnboarding
@@ -118,6 +127,8 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
   /reset:
     post:
+      tags:
+        - Admin
       summary: Reset
       description: Resets all candidates to initial state
       operationId: reset
@@ -130,6 +141,8 @@ paths:
                 $ref: '#/components/schemas/CandidateList'
   /candidate:
     post:
+      tags:
+        - Candidates
       summary: Add Candidate
       description: Add Candidate
       operationId: addCandidate
