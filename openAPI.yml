@@ -2,7 +2,10 @@ openapi: 3.0.0
 info:
   title: Employee Eligibility
   description: Employee Eligibility APIs
-  version: 0.1.0
+  version: 0.3.1
+  x-ibm-annotations: true
+  x-ibm-application-id: empEligibility
+  x-ibm-application-name: Employee Eligibility
 servers:
 - url: https://application-ab.151di5ffrvir.eu-gb.codeengine.appdomain.cloud
 paths:
@@ -45,6 +48,90 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /candidates:
+    get:
+      summary: View all candidates
+      description: View all candidates
+      operationId: getCandidates
+      responses:
+        '200':
+          description: All the candidate details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateList'
+  /onboarding:
+    get:
+      summary: Next candidate ready for onboarding
+      description: Next candidate ready for onboarding
+      operationId: getNextCandidateForOnboarding
+      responses:
+        '200':
+          description: The candidate details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Candidate'
+  /setStatusOnboarding:
+    post:
+      summary: Set candidate status to onboarding
+      description: Set candidate status to onboarding
+      operationId: updateToOnboarding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateIdentifier'
+        required: true
+      responses:
+        '201':
+          description: Updated candidate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Candidate'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /reset:
+    post:
+      summary: Reset
+      description: Resets all candidates to initial state
+      operationId: reset
+      responses:
+        '200':
+          description: All candidate details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateList'
+  /candidate:
+    post:
+      summary: Add Candidate
+      description: Add Candidate
+      operationId: addCandidate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Candidate'
+        required: true
+      responses:
+        '200':
+          description: New Candidate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Candidate'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     Candidate:
@@ -62,13 +149,58 @@ components:
           type: string
           format: date
           title: Dob
+        position:
+          type: string
+          title: Position
+        location:
+          type: string
+          title: Location
+        dept:
+          type: string
+          title: Dept
+        eligibility:
+          type: string
+          title: Eligibility
+        ref:
+          type: string
+          title: Ref
       type: object
       required:
         - id
         - name
         - status
         - dob
+        - position
+        - location
+        - dept
+        - eligibility
+        - ref
       title: Candidate
+      x-ibm-response-wrapper: true
+    CandidateIdentifier:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ref:
+          type: string
+          title: Ref
+      type: object
+      required:
+        - id
+        - ref
+      title: CandidateIdentifier
+    CandidateList:
+      properties:
+        candidates:
+          items:
+            $ref: '#/components/schemas/Candidate'
+          type: array
+          title: Candidates
+      type: object
+      required:
+        - candidates
+      title: CandidateList
     HTTPValidationError:
       properties:
         detail:

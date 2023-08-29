@@ -4,7 +4,39 @@ from pydantic import BaseModel
 from fastapi.routing import APIRoute
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
-app = FastAPI()
+description = """
+Employee Eligibility API helps you do awesome stuff. 🚀
+
+## Candidates
+
+This API allows you to view, add and update candidates. You will be able to:
+
+* **View a candidate**
+* **View ALL candidate**
+* **View the next candidate ready for onboarding**
+* **Set the status of a candidate to onboarding**
+* **Add a candidate**
+
+* **Filter candidates** (_not implemented_).
+"""
+
+
+app = FastAPI(
+    title="Employee Eligibility",
+    description=description,
+    summary="Employee Eligibility",
+    version="1.8",
+    terms_of_service="http://example.com/terms/",
+    contact={
+        "name": "Gerry Baird",
+        "url": "https://github.com/gerry-baird/employee-eligibility-api",
+        "email": "gerry.baird@uk.ibm.com",
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+)
 
 security = HTTPBasic()
 
@@ -27,6 +59,7 @@ class Candidate(BaseModel):
 
 class CandidateIdentifier(BaseModel):
     id: int
+    ref: str
 
 
 class CandidateList(BaseModel):
@@ -84,7 +117,7 @@ def get_candidate(id: int) -> Candidate:
     raise HTTPException(status_code=404, detail="Candidate not found")
 
 
-@app.get("/candidate/",
+@app.get("/candidates",
          summary='View all candidates',
          description='View all candidates',
          response_description="All the candidate details")
@@ -95,7 +128,7 @@ def getCandidates() -> CandidateList:
     return all_candidates
 
 
-@app.get("/next_onboarding/",
+@app.get("/onboarding",
          summary='Next candidate ready for onboarding',
          description='Next candidate ready for onboarding',
          response_description="The candidate details")
@@ -104,14 +137,14 @@ def getNextCandidateForOnboarding() -> Candidate:
         if candidate.status == "Accepted":
             return candidate
 
-@app.post(
-  '/statusOnboarding',
-  summary='Set candidate status to onboarding',
-  description='Set candidate status to onboarding',
-  response_description="Updated candidate"
-  )
-def setStatusOnboarding(identifier: CandidateIdentifier) -> Candidate:
 
+@app.post(
+    '/setStatusOnboarding',
+    summary='Set candidate status to onboarding',
+    description='Set candidate status to onboarding',
+    response_description="Updated candidate"
+)
+def updateToOnboarding(identifier: CandidateIdentifier) -> Candidate:
     target_id = identifier.id
 
     for candidate in pre_baked_candidates:
@@ -122,7 +155,8 @@ def setStatusOnboarding(identifier: CandidateIdentifier) -> Candidate:
         raise HTTPException(status_code=404, detail="Candidate not found")
     else:
         target_candidate.status = "Onboarding"
-        
+        target_candidate.ref = identifier.ref
+
     return target_candidate
 
 
@@ -137,6 +171,23 @@ def reset() -> CandidateList:
     all_candidates = CandidateList(candidates=pre_baked_candidates)
 
     return all_candidates
+
+
+@app.post('/candidate',
+    summary = 'Add Candidate',
+    description = 'Add Candidate',
+    response_description = "New Candidate")
+def addCandidate(newCandidate: Candidate) -> Candidate:
+
+    # find the maximum ID in the existing candidates
+    max_id = 0
+    for candidate in pre_baked_candidates:
+        if candidate.id > max_id:
+            max_id = candidate.id
+
+    newCandidate.id = max_id + 1
+    pre_baked_candidates.append(newCandidate)
+    return newCandidate
 
 
 def use_route_names_as_operation_ids(app: FastAPI) -> None:
